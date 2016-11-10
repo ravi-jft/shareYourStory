@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DynamicElementsStorage">
+    <option name="containingClasses">
+      <map>
+        <entry key="java.lang.Object">
+          <value>
+            <DClassElement>
+              <option name="name" value="java.lang.Object" />
+              <option name="myName" value="java.lang.Object" />
+              <option name="myProperties">
+                <set>
+                  <DPropertyElement>
+                    <option name="name" value="name" />
+                    <option name="static" value="false" />
+                    <option name="type" value="java.lang.String" />
+                    <option name="myType" value="java.lang.String" />
+                    <option name="myStatic" value="false" />
+                    <option name="myName" value="name" />
+                  </DPropertyElement>
+                </set>
+              </option>
+            </DClassElement>
+          </value>
+        </entry>
+        <entry key="java.util.UUID">
+          <value>
+            <DClassElement>
+              <option name="name" value="java.util.UUID" />
+              <option name="myName" value="java.util.UUID" />
+              <option name="myMethods">
+                <set>
+                  <DMethodElement>
+                    <option name="name" value="randoUUID" />
+                    <option name="static" value="false" />
+                    <option name="type" value="java.util.UUID" />
+                    <option name="myType" value="java.util.UUID" />
+                    <option name="myStatic" value="false" />
+                    <option name="myName" value="randoUUID" />
+                  </DMethodElement>
+                </set>
+              </option>
+            </DClassElement>
+          </value>
+        </entry>
+        <entry key="org.codehaus.groovy.grails.commons.GrailsClass">
+          <value>
+            <DClassElement>
+              <option name="name" value="org.codehaus.groovy.grails.commons.GrailsClass" />
+              <option name="myName" value="org.codehaus.groovy.grails.commons.GrailsClass" />
+              <option name="myMethods">
+                <set>
+                  <DMethodElement>
+                    <option name="name" value="getPersistentProperty" />
+                    <option name="static" value="false" />
+                    <option name="type" value="java.lang.Boolean" />
+                    <option name="myPairs">
+                      <list>
+                        <ParamInfo>
+                          <option name="name" value="s" />
+                          <option name="type" value="java.lang.String" />
+                        </ParamInfo>
+                      </list>
+                    </option>
+                    <option name="myType" value="java.lang.Boolean" />
+                    <option name="myStatic" value="false" />
+                    <option name="myName" value="getPersistentProperty" />
+                  </DMethodElement>
+                </set>
+              </option>
+            </DClassElement>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
