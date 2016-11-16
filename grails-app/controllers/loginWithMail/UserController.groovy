@@ -2,53 +2,50 @@ package loginWithMail
 
 import grails.plugin.springsecurity.annotation.Secured
 import org.codehaus.groovy.grails.web.mapping.LinkGenerator
+import org.fusesource.jansi.AnsiRenderer
 import org.springframework.security.crypto.bcrypt.BCrypt
 import groovy.time.*
+import java.util.UUID
 //import org.codehaus.groovy.runtime.TimeCategory
 
 //@Transactional(readOnly = true)
 @Secured(['permitAll'])
 class UserController {
-    def mailService
+   def mailService
     def springSecurityService
+
+    def enableUserService
+    def sendALinkService
+    def checkUrlService
+    def resetCommitService
+    def userRegisterService
+    def unlockAccountService
+
+
     LinkGenerator grailsLinkGenerator
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
     static defaultAction = "register"
     def login(){}
 
-    def register(checkPasswordCommand cpc) {
-
-        if (request.method == "POST") {
-           /* if (cpc.hasErrors()) {
-                return [myerrors: cpc]
-            } else {*/
-                User user = new User(cpc.properties)
-                String mail = params.email
-                UUID token = UUID.randomUUID()
-                user.token = token
-                if (user.validate()) {
-                    user.save(flush: true, failOnError: true)
-                    Role role = Role.findByAuthority("ROLE_ADMIN")
-                    new UserRole(user, role).save(flush: true, failOnError: true)
-                    //render(message(code: 'data.save'))
-                    flash.message=(message(code: 'data.save'))
-                } else {
-                    flash.message = "Error Registering User"
-                    return [ user: cpc ]
-              }
-            sendMail {
-                multipart true
-                to mail
-                subject "activation link"
-                String url = grailsLinkGenerator.link(controller: 'user', action: 'enableUser', absolute: true, params: [token: token])
-                body url
-                //render(message(code: 'password.reset.passwordForget'))
-                flash.messageLink=(message(code: 'password.reset.passwordForget'))
-                redirect(controller: 'logout')
+    def register(CheckPasswordCommand cpc){
+        if (request.method == "POST"){
+            if (cpc.validate()){
+                def user = userRegisterService.submit(cpc)
+                if (user){
+                    flash.messageLink = (message(code: 'password.reset.passwordForget'))
+                    redirect(controller: 'logout')
+                    }
+            }else {
+                //flash.message = "Error Registering User"
+                return [user: cpc]
             }
         }
     }
+
+
+
+
    /* def checkEmail(){
         println "------------params-----"+params.email
         List<User> users = User.findAllByEmail(params.email)
@@ -56,67 +53,71 @@ class UserController {
 
 
         //redirect("Hello This is return")
-    def checkEmail() {
+ /*   def checkEmail() {      //checkEmail for Ajax
         def users = User.findAll()
-            List<User> email = users.email
-            render (email.get(0));
-    }
 
-    def enableUser() {  //enable the user on clicking activation link
-        String tokenUrl = params.token
-        User user = User.findByToken(tokenUrl)
-        if (user) {
-            user.enabled = true
-            user.token = null
-            user.save(flush: true)
-            //render(message(code: 'account.activate'))
-            flash.message = (message(code: 'account.activate'))
-            //will redirect to homepage
-        } else {
-            render(message(code: 'url.invalid'))
+            List email = users.email
+            for (int i=0;i<email.size();i++)
+            render (email.get(i));
+            //render (email)
+    }*/
+
+    def checkEmail(){
+    User user = User.findByEmail(params.email)
+        if(user) {
+            render (message(code:'email.exist'))
         }
     }
 
+    def enableUser(String token){
+           def user = enableUserService.Enable(token)
+            if (user) {
+                render(message(code: 'account.activate'))
+            }
+            else {
+                render(message(code:'url.invalid'))
+            }
+    }
 
     //Forget Password
     def forgetPassword(){}
 
-    def sendALink(){   ///By this we will sent a reset link at email
-        String mail
-        String token=UUID.randomUUID()
-        println("============================token========"+token)
-        def user= User.findByUsername(params.loginUser)
-        if (!user){
-            def user1 =User.findByEmail(params.loginUser)
-            mail = user1.email
-            user1.token = token
-            user1.linkcreateDate=new Date()
-            user1.save(flush: true, failOnError: true)
-        }else {
-            mail = user.email
-            user.token = token
-            user.linkcreateDate=new Date()
-            user.save(flush: true, failOnError: true)
+    def sendALink(String username,String token){
+        if (params.username) {
+            def user = sendALinkService.createLink(username, token)
+            if (user) {
+                String email = user.email
+                token = user.token
+                println("===================token in sendALink=====" + user.token)
+                sendMail {
+                    multipart true
+                    to email
+                    subject "Change your Password"
+                    String url = grailsLinkGenerator.link(controller: 'user', action: 'checkUrl', absolute: true, params: [token: token])
+                    body url
+                    render(message(code: 'password.reset.passwordForget'))
+                }
+            }
+            else {
+                flash.message = message(code: 'user.invalid')
+                render(view: 'forgetPassword')
+            }
         }
-
-        sendMail{
-            multipart true
-            to mail
-            subject "Change your Password"
-            String url =  grailsLinkGenerator.link(controller: 'user', action: 'checkUrl',absolute: true,params: [token:token])
-            body url
-            render (message(code: 'password.reset.passwordForget'))
+        else {
+            flash.error = message(code: 'textField.blank')
+            render(view: 'forgetPassword')
         }
     }
+
     def checkUrl(){  //it will check for valid link sent at email
-        String tokenUrl = params.token
-        println(params.token)
-        /*println "===========token:"+tokenUrl*/
-        User user=User.findByToken(tokenUrl)
+        String token = params.token
+
+        println "=============================================token:"+params.token
+        User user=User.findByToken(token)
         if(user) {
             use (TimeCategory) {
             if((new Date()- user.linkcreateDate ) <= 5.minutes) {
-                redirect(action: 'resetPassword', params: [tokenUrl: tokenUrl])
+                redirect(action: 'resetPassword', params: [token: token])
             }
             else {
                 render("timeOut")
@@ -127,46 +128,45 @@ class UserController {
             render (message(code: 'url.link.invalid'))
         }
     }
+
+  /*  def checkUrl(token){
+        checkUrlService.checkurl(token)
+        redirect(action: 'resetPassword', params: [token: token])
+
+    }*/
+
     def resetPassword(){ //here we will enter new password
         // println "==============================================================="+getParams()
     }
 
-    def resetCommit() {
-       // println "===================="+tokenUrl
-       User user = User.findByToken(params.tokenUrl)
-        user.password = params.password
-        println("================user.password==============="+user.password)
-        if (user.password == params.confirmpassword) {
-            user.token = null
-            user.linkcreateDate=null
-            user.save(flush: true)
-            // render("password changed successfully")
+    def resetCommit(ResetPasswordCommand checkPassword){
+        println params
+        if (checkPassword.validate()){
+            def user = resetCommitService.reset(checkPassword)
+            if (user)
             render (message(code: 'password.forget.controller'))
         }
         else {
-            // flash.message = "password is not matched"
-            //redirect(controller: 'passwordForget' ,action: 'resetPassword')
             flash.error = (message(code: 'password.unmatched.passwordForget'))
             render (view: 'resetPassword')
         }
     }
 
-    //update password
 
     def updatePassword(){}
 
     def update() {
         User user = springSecurityService.getCurrentUser()
         if (BCrypt.checkpw(params.password, user.password)) {
-            if (params.newPassword == params.confirmNewPassword){
-                user.password=params.newPassword
-                user.save(flush: true)
-                render (message(code: 'password.forget.controller'))
-            }
-            else {
-                flash.error=(message(code: 'password.unmatched.passwordForget'))
-                render(view: 'updatePassword')
-            }
+                if (params.newPassword == params.confirmNewPassword){
+                    user.password=params.newPassword
+                    user.save(flush: true)
+                    render (message(code: 'password.forget.controller'))
+                }
+                else {
+                    flash.error=(message(code: 'password.unmatched.passwordForget'))
+                    render(view: 'updatePassword')
+                }
 
         } else {
             flash.message= (message(code: 'password.old.update'))
@@ -203,7 +203,7 @@ class UserController {
     //unlock account if its locked by anyone by sending a link to mail
     def unlockaccount(){}
 
-    def unlockAccountLink(){
+/*    def unlockAccountLink(){
         String mail
         String token=UUID.randomUUID()
         println("============================token========"+token)
@@ -231,6 +231,21 @@ class UserController {
             render (message(code: 'password.reset.passwordForget'))
         }
 
+    }*/
+
+    def unlockAccountLink(String loginUser){
+        def user
+        if (params.loginUser == ""){
+            flash.error = (message(code: 'textField.blank'))
+            render(view: 'unlockaccount')
+        }else {
+        user = unlockAccountService.unlock(loginUser)}
+        if (user){
+            render (message(code: 'password.reset.passwordForget'))
+        }
+        else {
+            render (message(code: 'user.invalid'))
+        }
     }
 
     def unlockCheckUrl(){  //it will check for valid link sent at email for unlocking account

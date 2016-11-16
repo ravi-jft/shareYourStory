@@ -23,7 +23,9 @@ class User implements Serializable {
 	String token
 	Date linkcreateDate
 	Date linkuseDate
-	boolean enabled = true
+
+	Integer attempts =0
+	boolean enabled = false
 	boolean accountExpired
 	boolean accountLocked
 	boolean passwordExpired
@@ -75,6 +77,8 @@ class User implements Serializable {
 		token nullable: true
 		linkcreateDate nullable: true
 		linkuseDate nullable: true
+
+		attempts nullable: true
 	}
 
 	static mapping = {

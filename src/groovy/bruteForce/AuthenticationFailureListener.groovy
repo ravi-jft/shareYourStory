@@ -12,18 +12,9 @@ import org.springframework.security.core.userdetails.UserDetails
         LoginAttemptCacheService loginAttemptCacheService
 
         void onApplicationEvent(AuthenticationFailureBadCredentialsEvent e) {
+println("==============================="+e.authentication.name)
             loginAttemptCacheService.failLogin(e.authentication.name)
         }
     }
 
-  /*  public void onApplicationEvent(ApplicationEvent appEvent)
-    {
-        if (appEvent instanceof AuthenticationSuccessEvent)
-        {
-            AuthenticationSuccessEvent event = (AuthenticationSuccessEvent) appEvent;
-            UserDetails userDetails = (UserDetails) event.getAuthentication().getPrincipal();
-
-            // ....
-        }
-    }*/
 
