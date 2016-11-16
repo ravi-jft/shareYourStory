@@ -114,7 +114,7 @@ grails.plugin.springsecurity.useSecurityEventListener = true //enable spring sec
 
 grails.plugin.springsecurity.apf.storeLastUsername=true  //store last spring security username
 
-grails.plugin.springsecurity.password.algorithm='bcrypt' 
+
 
 
 environments {

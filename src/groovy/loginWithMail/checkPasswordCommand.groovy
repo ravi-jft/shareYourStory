@@ -6,24 +6,23 @@ import grails.validation.Validateable
  * Created by ravi on 27/10/16.
  */
 @Validateable
-class CheckPasswordCommand {
+class checkPasswordCommand {
     String firstname
     String lastname
     String email
-    Integer contact
+    String contact
     String address
     String username
     String password
     String conformpassword
 
     static constraints = {
-        firstname blank: false, size: 3..15
-        lastname nullable: true, size: 3..15
+        firstname blank: false
+        lastname nullable: true
         email blank: false, email: true
-        contact nullable: true, maxSize:10, minSize: 10
-        address nullable: true, size: 20..100
+        contact nullable: true
+        address nullable: true
         username blank: false
-        password size: 4..25
         conformpassword (nullable: false,
                 validator:{passwd2,obj->
                     return passwd2 == obj.password

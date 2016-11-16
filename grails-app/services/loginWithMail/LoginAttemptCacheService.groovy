@@ -8,11 +8,7 @@ import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 
 import grails.plugin.springsecurity.SpringSecurityUtils
-import org.apache.catalina.Session
-import org.codehaus.groovy.grails.web.util.WebUtils
-import org.springframework.web.context.request.RequestContextHolder
 
-import javax.servlet.http.HttpSession
 import java.util.concurrent.TimeUnit
 import org.apache.commons.lang.math.NumberUtils
 import javax.annotation.PostConstruct
@@ -23,14 +19,10 @@ class LoginAttemptCacheService {
 
     private LoadingCache<String, Integer> attempts
 
-    /*def session
-    Integer attemptnumber*/
     private Integer allowedNumberOfAttempts
 
     @PostConstruct
     void init() {
-       // session = WebUtils.retrieveGrailsWebRequest().session
-
         allowedNumberOfAttempts = grailsApplication.config.bruteforcedefender.allowedNumberOfAttempts
         Integer time = grailsApplication.config.bruteforcedefender.time
 
@@ -48,21 +40,15 @@ class LoginAttemptCacheService {
      * @return
      */
     def failLogin(String login) {
-        println "---------login------"+login
         int numberOfAttempts = attempts.get(login)
         log.debug "fail login $login previous number for attempts $numberOfAttempts"
         numberOfAttempts++
-
-        def user = User.findByUsername(login)
-        user.attempts=numberOfAttempts
-        user.save(flush: true)
-
 
         if (numberOfAttempts >= allowedNumberOfAttempts) {
             blockUser(login)
             attempts.invalidate(login)
         } else {
-                attempts.put(login, numberOfAttempts)
+            attempts.put(login, numberOfAttempts)
         }
     }
 

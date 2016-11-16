@@ -1,5 +1,4 @@
 package loginWithMail
-//import java.util.Date
 
 class DateTagLib {
     static defaultEncodeAs = [taglib:'html']
@@ -11,7 +10,7 @@ class DateTagLib {
         out << niceDate
     }
 
-     protected String getNiceDate(Date date) {
+    protected String getNiceDate(Date date) {
         def now = new Date()
         def diff = Math.abs(now.time - date.time)
         final long second = 1000

@@ -12,16 +12,9 @@
 </head>
 
 <body>
-<g:if test="${flash.error}">
-    ${flash.error}
-</g:if>
-
-<g:elseif test="${flash.message}">
-    ${flash.message}
-</g:elseif>
 <g:form action="sendALink">
-    <label for="username">Enter username</label>
-    <g:textField name="username"></g:textField>
+    <label for="loginUser">Enter UserName or Email</label>
+    <g:textField name="loginUser"></g:textField>
     <g:submitButton name="save" value="Save"/>
 </g:form>
 </body>

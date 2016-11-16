@@ -17,11 +17,11 @@
 </g:if>
 <g:form action="resetCommit">
     <br>
-<g:hiddenField name="token" value="${params.token}"/>
+<g:hiddenField name="tokenUrl" value="${params.tokenUrl}"/>
     <label for="password">Enter new Password </label>
-    <g:textField name="password" required="required"></g:textField><br>
+    <g:textField name="password"></g:textField><br>
     <label for="confirmpassword">Confirm Password</label>
-    <g:textField name="confirmpassword" required="required"></g:textField>
+    <g:textField name="confirmpassword"></g:textField>
     <g:submitButton name="resetIt" value="ResetIt"/>
 </g:form>
 </body>

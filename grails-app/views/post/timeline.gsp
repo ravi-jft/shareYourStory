@@ -1,8 +1,7 @@
 
-<%@ page import="loginWithMail.Commentpost; loginWithMail.Likepost" contentType="text/html;charset=UTF-8" %>
+<%@ page import="loginWithMail.Likepost" contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <title>
        %{-- Timeline for ${user.fullName :
                 user.firstname }--}%
@@ -34,30 +33,19 @@ Share Your Story
                 ${posts.content}
             </div>
             <div class="postDate">
-                <hub:dateFromNow date="${posts.dateCreated}"/>
-               %{-- ${post.dateCreated}--}%
+                ${post.dateCreated}
             </div>
         </div>
         <table>
             <tr>
                 <td><a class="btn btn-default" href="<g:createLink controller="post" action="postlike" id="${posts.id}"/>" role="button" id="${posts.id}">Like</a>
-                <g:form action="postcomment"  id="${posts.id}">
-                    <g:textArea name="commentname" id="commentBox"/>
-                    <g:submitButton name="Comment" value="Comment"/>
-                </g:form>
+                <a class="btn btn-default" href="#" role="button">Comment</a></td>
             </tr>
         </table><br/>
          ${Likepost.countByPost(posts)} Like
-        %{--${Commentpost.findB} Comment--}%
     </g:each>
     <g:paginate controller="post" action="timeline" next="Forward" prev="Back"  total = "${postCount}"/>
 </div>
-<script>
-    $(document).ready(function(){
-        $("#commentBox").hide();
-        console.log("Hello");
-    });
-</script>
-</body>
 
+</body>
 </html>

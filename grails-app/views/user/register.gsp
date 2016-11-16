@@ -9,7 +9,8 @@ table{font-family: Calibri; color:white; font-size: 11pt; font-style: normal;
 background-color: SlateBlue; border-collapse: collapse; border: 2px solid navy}
 table.inner{border: 0px}
 </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"/>
 </head>
 
 <body>
@@ -29,7 +30,7 @@ table.inner{border: 0px}
 <!----- First Name ---------------------------------------------------------->
 <tr>
 <td>FIRST NAME</td>
-<td><g:textField type="text" name="firstname" maxlength="20" required="required" placeholder="First Name" value="${user?.firstname}"/>
+<td><g:textField type="text" name="firstname" maxlength="20" required="required" placeholder="First Name"/>
 (max 30 characters a-z and A-Z and mandatory fields)
 </td>
 </tr>
@@ -37,7 +38,7 @@ table.inner{border: 0px}
 <!----- Last Name ---------------------------------------------------------->
 <tr>
 <td>LAST NAME</td>
-<td><g:textField type="text" name="lastname" maxlength="20" placeholder="Last Name" value="${user?.lastname}"/>
+<td><g:textField type="text" name="lastname" maxlength="20" placeholder="Last Name"/>
 (max 30 characters a-z and A-Z)
 </td>
 </tr>
@@ -46,7 +47,7 @@ table.inner{border: 0px}
 <!----- Email Id ---------------------------------------------------------->
 <tr>
 <td>EMAIL ID</td>
-<td><g:textField type="text" name="email" id="email" required="required" placeholder="Email"  value="${user?.email}"/>
+<td><g:textField type="text" name="email" id="email" required="required" placeholder="Email"/>
 (mandatory field)
 </td>
 
@@ -57,7 +58,7 @@ table.inner{border: 0px}
 <tr>
 <td>MOBILE NUMBER</td>
 <td>
-<g:textField type="text" name="contact" maxlength="10" placeholder="Mobile Number"  value="${user?.contact}"/>
+<g:textField type="text" name="contact" maxlength="10" placeholder="Mobile Number"/>
 (10 digit number)
 </td>
 </tr>
@@ -66,14 +67,14 @@ table.inner{border: 0px}
 <!----- Address ---------------------------------------------------------->
 <tr>
 <td>ADDRESS <br /><br /><br /></td>
-<td><g:textField type="text" name="address" rows="4" cols="30" placeholder="address"  value="${user?.address}"/></td>
+<td><g:textField type="text" name="address" rows="4" cols="30" placeholder="address"/></td>
 </tr>
 
  
 <!----- Username ---------------------------------------------------------->
 <tr>
 <td>Username</td>
-<td><g:textField type="text" name="username" maxlength="30" required="required" placeholder="username"  value="${user?.username}" />
+<td><g:textField type="text" name="username" maxlength="30" required="required" placeholder="username" />
 (mandatory field)
 </td>
 </tr>
@@ -81,7 +82,7 @@ table.inner{border: 0px}
 <!----- Password ---------------------------------------------------------->
 <tr>
 <td>Password</td>
-<td><g:passwordField type="password" name="password" required="required" placeholder="password"  value="${user?.password}"/>
+<td><g:passwordField type="password" name="password" required="required" placeholder="password"/>
     (mandatory field)
 </td>
 </tr>
@@ -89,7 +90,7 @@ table.inner{border: 0px}
     <!----- Confirm Password ---------------------------------------------------------->
     <tr>
         <td>Conform Password</td>
-        <td><g:passwordField type="password" name="conformpassword" required="required" placeholder="re-enter password"  value="${user?.conformpassword}"/>
+        <td><g:passwordField type="password" name="conformpassword" required="required" placeholder="re-enter password"/>
         (mandatory field)
         </td>
     </tr>
@@ -105,7 +106,7 @@ table.inner{border: 0px}
 </table>
  
 </g:form>
-%{-- <script>
+ <script>
      $("#email").blur(function(){
          console.log("we are inside");
          $.ajax({
@@ -116,40 +117,19 @@ table.inner{border: 0px}
              method : "post",
              success: function(result){
                  console.log("Fine" + result);
-                 console.log(result.length)
-                 for (var i=0;i<result.length;i++)
-                 {
-                        if($("#email").val() == result[i]){
-                            alert("Alredy in use");}
+                 if($("#email").val() == result){
+                     alert("Alredy in use");
                  }
 
-             }
-            /* error: function(err){
+             },
+             error: function(err){
                  console.log(err);
                  alert("some erro");
 
-             }*/
-         });
-     });
-
- </script>--}%
-
- <script>
-     $("#email").blur(function(){
-         console.log("we are inside");
-         $.ajax({
-             data:{
-                 "email":$("#email").val()
-             },
-             url: "<g:createLink controller='user' action='checkEmail' params="email"/>",
-             method : "post",
-             success: function(result){
-                alert(result)
              }
          });
      });
 
  </script>
-
 </body>
 </html>

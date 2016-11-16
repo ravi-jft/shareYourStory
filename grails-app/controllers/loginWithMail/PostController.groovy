@@ -15,6 +15,8 @@ class PostController {
            [post: post , postCount:postCount]
        }
 
+
+
     def postService //inject Service
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
@@ -48,21 +50,6 @@ class PostController {
 
             redirect (controller: 'post', action: 'timeline')
         }
-    }
-
-    def postcomment(){
-        User user = springSecurityService.getCurrentUser()
-        Post post = Post.findById(params.id)
-        Commentpost comment = new Commentpost(user:(User)springSecurityService.getCurrentUser(),post: post,commentname:params.commentname)
-        if (comment.validate()) {
-            post.addToComments(comment)
-            post.save(flush: true, failOnError: true)
-        }
-        else {
-            render("some errors")
-        }
-
-        redirect (controller: 'post', action: 'timeline')
     }
 
     def search(){}

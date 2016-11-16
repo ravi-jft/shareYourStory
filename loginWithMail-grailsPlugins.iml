@@ -133,9 +133,7 @@
           <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/11.0.1/guava-11.0.1.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="jar://$USER_HOME$/.ideaLibSources/spring-security-web-3.2.9.RELEASE-sources.jar!/" />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
   </component>

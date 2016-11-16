@@ -5,7 +5,7 @@ class Post {
     Date dateCreated
 
     static belongsTo = [user:User]
-    static hasMany = [likes:Likepost,comments:Commentpost]
+    static hasMany = [likes:Likepost]
 
     static searchable = true
 
