@@ -6,7 +6,7 @@ import grails.validation.Validateable
  * Created by ravi on 27/10/16.
  */
 @Validateable
-class checkPasswordCommand {
+class CheckPasswordCommand {
     String firstname
     String lastname
     String email

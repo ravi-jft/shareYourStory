@@ -17,8 +17,8 @@ environments {
     development {
         dataSource {
             //dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
-            dbCreate="create-drop"
-            url = "jdbc:mysql://localhost/loginWithMailExtend?useUnicode=yes&characterEncoding=UTF-8"
+            dbCreate="update"
+            url = "jdbc:mysql://localhost/shop1?useUnicode=yes&characterEncoding=UTF-8"
             username = "root"
             password = "123456"
         }

@@ -15,7 +15,7 @@
 package grails.plugin.springsecurity
 
 import grails.converters.JSON
-import loginWithMail.User
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 import javax.servlet.http.HttpServletResponse
 
@@ -58,6 +58,8 @@ class LoginController {
 	def auth() {
 
 		def config = SpringSecurityUtils.securityConfig
+
+		//def username = UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY
 
 		if (springSecurityService.isLoggedIn()) {
 			redirect uri: config.successHandler.defaultTargetUrl
@@ -104,18 +106,6 @@ class LoginController {
 	 * Callback after a failed login. Redirects to the auth page with a warning message.
 	 */
 	def authfail() {
-	/*	def username = session['SPRING_SECURITY_LAST_USERNAME']
-
-		User user = User.findByUsername(username.toString())
-		println("================usernamejlslsls=========="+user.attemptcount)
-		if (user.attemptcount>5){
-			user.accountLocked=true
-			user.save(flush: true)
-		}
-		else {
-			user.attemptcount=user.attemptcount+1
-			user.save(flush: true)
-		}*/
 		String msg = ''
 		def exception = session[WebAttributes.AUTHENTICATION_EXCEPTION]
 		if (exception) {

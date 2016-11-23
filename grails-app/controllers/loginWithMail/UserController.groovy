@@ -1,5 +1,6 @@
 package loginWithMail
 
+import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.plugin.springsecurity.annotation.Secured
 import org.codehaus.groovy.grails.web.mapping.LinkGenerator
 import org.springframework.security.crypto.bcrypt.BCrypt
@@ -17,7 +18,25 @@ class UserController {
     static defaultAction = "register"
     def login(){}
 
-    def register(checkPasswordCommand cpc) {
+    def home(){
+        if (SpringSecurityUtils.ifAllGranted('ROLE_ADMIN')) {
+            redirect controller: 'user', action: 'adminHome'
+           // return
+        }
+        if (SpringSecurityUtils.ifAllGranted('ROLE_USER')) {
+            redirect controller: 'user', action: 'userHome'
+           // return
+        }
+    }
+
+    def adminHome(){
+        def navmenu = NavMenu.list()
+        [navmenu:navmenu]
+    }
+
+    def userHome(){}
+
+    def register(CheckPasswordCommand cpc) {
 
         if (request.method == "POST") {
            /* if (cpc.hasErrors()) {
@@ -29,7 +48,8 @@ class UserController {
                 user.token = token
                 if (user.validate()) {
                     user.save(flush: true, failOnError: true)
-                    Role role = Role.findByAuthority("ROLE_ADMIN")
+                   Role role = Role.findByAuthority("ROLE_USER")
+                    /*Role role = Role.findByAuthority("ROLE_ADMIN")*/
                     new UserRole(user, role).save(flush: true, failOnError: true)
                     //render(message(code: 'data.save'))
                     flash.message=(message(code: 'data.save'))
@@ -49,13 +69,7 @@ class UserController {
             }
         }
     }
-   /* def checkEmail(){
-        println "------------params-----"+params.email
-        List<User> users = User.findAllByEmail(params.email)
-        println "----users------------"+users*.email*/
 
-
-        //redirect("Hello This is return")
     def checkEmail() {
         def users = User.findAll()
             List<User> email = users.email
@@ -69,8 +83,8 @@ class UserController {
             user.enabled = true
             user.token = null
             user.save(flush: true)
-            //render(message(code: 'account.activate'))
-            flash.message = (message(code: 'account.activate'))
+            render (message(code: 'account.activate'))
+           // flash.message = (message(code: 'account.activate'))
             //will redirect to homepage
         } else {
             render(message(code: 'url.invalid'))
@@ -132,10 +146,8 @@ class UserController {
     }
 
     def resetCommit() {
-       // println "===================="+tokenUrl
        User user = User.findByToken(params.tokenUrl)
         user.password = params.password
-        println("================user.password==============="+user.password)
         if (user.password == params.confirmpassword) {
             user.token = null
             user.linkcreateDate=null
@@ -255,6 +267,7 @@ class UserController {
         User user = User.findByToken(params.tokenUrl)
         println("=============================resetAccount======"+user)
         user.accountLocked=false
+        user.attempts=0
         user.save(flush: true)
         render("your account is successfully unlocked")
     }

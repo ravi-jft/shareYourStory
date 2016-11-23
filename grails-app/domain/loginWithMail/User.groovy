@@ -21,16 +21,16 @@ class User implements Serializable {
 	String username
 	String password
 	String token
+
+	Integer attempts = 0 //take default value as 0.
 	Date linkcreateDate
 	Date linkuseDate
-	boolean enabled = true
+	boolean enabled= false
 	boolean accountExpired
 	boolean accountLocked
 	boolean passwordExpired
 
-	static searchable = true
-
-	static hasMany = [posts:Post,following:User]
+	static hasMany = [navMenu:NavMenu]
 
 	User(String firstname,String lastname,String email,String contact,String address, username, String password) {
 		this()
@@ -41,8 +41,9 @@ class User implements Serializable {
 		this.address=address
 		this.username = username
 		this.password = password
-		this.attemptcount=attemptcount
 	}
+
+
 
 	Set<Role> getAuthorities() {
 		UserRole.findAllByUser(this)*.role

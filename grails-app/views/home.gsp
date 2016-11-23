@@ -57,11 +57,14 @@
           <ul class="dropdown-menu">
             <li><a href="<g:createLink controller="user" action="show"/>">Profile</a></li>
             <li><a href="#">Page 1-2</a></li>
+                <ul class="right-menu">
+                   <li><a href="#">page 1.1</a> </li>
+                </ul>
             <li><a href="#">Page 1-3</a></li>
           </ul>
         </li>
-        <li><a href="#">Page 2</a></li>
-        <li><a href="<g:createLink controller="post" action="timeline"/>">Write your Story</a></li>
+        <li><a href="<g:createLink controller="navMenu" action="createCategory"/>">Create Category</a></li>
+        <li><a href="<g:createLink controller="product" action="insertProduct"/>">Add Product</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>

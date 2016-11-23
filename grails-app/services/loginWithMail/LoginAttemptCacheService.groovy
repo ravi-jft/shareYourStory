@@ -44,6 +44,12 @@ class LoginAttemptCacheService {
         log.debug "fail login $login previous number for attempts $numberOfAttempts"
         numberOfAttempts++
 
+        /*For storing number of attempts*/
+        int temp = numberOfAttempts  //for storing no. of attempts in database
+        User user = User.findByUsername(login)
+        user.attempts = temp
+        user.save(flush: true)
+
         if (numberOfAttempts >= allowedNumberOfAttempts) {
             blockUser(login)
             attempts.invalidate(login)
@@ -73,6 +79,7 @@ class LoginAttemptCacheService {
             def conf = SpringSecurityUtils.securityConfig
             String accountLockedPropertyName = conf.userLookup.accountLockedPropertyName
             user."$accountLockedPropertyName" = true
+            //user.attempts = 0
             user.save(flush: true)
         }
     }

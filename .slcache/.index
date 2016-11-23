@@ -5368,3 +5368,12 @@ n:3086:grails/plugin/hibernate3/HibernatePluginSupport$__clinit__closure3
 n:3727:grails/plugin/hibernate3/HibernatePluginSupport$__clinit__closure4
 n:1567:java_io_File$equals$9
 n:2851:BuildConfig$_run_closure1_closure4
+n:1409:java_io_File$getCanonicalPath$10
+n:4439:groovy/time/TimeCategory
+n:12399:org/apache/commons/lang/math/NumberUtils
+n:2966:com/google/common/cache/CacheLoader
+n:1050:com/google/common/cache/LoadingCache
+n:1555:com/google/common/cache/Cache
+n:15786:com/google/common/cache/CacheBuilder
+n:358:com/google/common/util/concurrent/ListenableFuture
+n:326:com/google/common/base/Supplier
