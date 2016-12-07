@@ -1,9 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: ravi
-  Date: 10/11/16
-  Time: 12:02 AM
---%>
 
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
@@ -12,9 +6,21 @@
 </head>
 
 <body>
+<g:if test="${flash.message}">
+    ${flash.message}
+</g:if>
+
+<g:elseif test="${flash.blank}">
+   ${flash.blank}
+</g:elseif>
+
+<g:elseif test="${flash.checkNet}">
+    <div class="flash">${flash.checkNet}</div>
+</g:elseif>
+
 <g:form action="unlockAccountLink">
-    <label for="loginUser">Enter UserName or Email</label>
-    <g:textField name="loginUser"></g:textField>
+    <label><g:message code="default.label.username"/> </label>
+    <g:textField name="loginUser" placeholder="username" required="required"/>
     <g:submitButton name="save" value="Save"/>
 </g:form>
 </body>

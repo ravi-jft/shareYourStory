@@ -13,176 +13,190 @@ class UserController {
     def mailService
     def springSecurityService
     LinkGenerator grailsLinkGenerator
+    def userRegisterService
+    def enableUserService
+    def sendALinkService
+    def checkUrlService
 
-    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+   /* static allowedMethods = [save: "POST", update: "POST", delete: "DELETE"]*/
     static defaultAction = "register"
+
+
+    def index(){
+        def product = Product.list()
+        [product:product]
+    }
+
     def login(){}
 
+    @Secured(['ROLE_ADMIN','ROLE_USER'])
     def home(){
         if (SpringSecurityUtils.ifAllGranted('ROLE_ADMIN')) {
             redirect controller: 'user', action: 'adminHome'
-           // return
         }
         if (SpringSecurityUtils.ifAllGranted('ROLE_USER')) {
             redirect controller: 'user', action: 'userHome'
-           // return
         }
     }
 
+    @Secured(['ROLE_ADMIN'])
     def adminHome(){
         def navmenu = NavMenu.list()
-        [navmenu:navmenu]
+        def product = Product.list()
+        [navmenu:navmenu,product: product]
     }
 
-    def userHome(){}
+    @Secured(['ROLE_USER'])
+    def userHome(){
+        def product = Product.list()
+        println("==========in userHOme.............=="+product)
+        [product:product]
+    }
 
-    def register(CheckPasswordCommand cpc) {
+    def register(CheckPasswordCommand cpc,User user) {
 
         if (request.method == "POST") {
-           /* if (cpc.hasErrors()) {
-                return [myerrors: cpc]
-            } else {*/
-                User user = new User(cpc.properties)
-                String mail = params.email
-                UUID token = UUID.randomUUID()
-                user.token = token
-                if (user.validate()) {
-                    user.save(flush: true, failOnError: true)
-                   Role role = Role.findByAuthority("ROLE_USER")
-                    /*Role role = Role.findByAuthority("ROLE_ADMIN")*/
-                    new UserRole(user, role).save(flush: true, failOnError: true)
-                    //render(message(code: 'data.save'))
-                    flash.message=(message(code: 'data.save'))
-                } else {
-                    flash.message = "Error Registering User"
-                    return [ user: cpc ]
-              }
-            sendMail {
-                multipart true
-                to mail
-                subject "activation link"
-                String url = grailsLinkGenerator.link(controller: 'user', action: 'enableUser', absolute: true, params: [token: token])
-                body url
-                //render(message(code: 'password.reset.passwordForget'))
-                flash.messageLink=(message(code: 'password.reset.passwordForget'))
-                redirect(controller: 'logout')
+            user = new User(cpc.properties)
+            if (user.validate()) {
+                try {
+                    def userService = userRegisterService.submit(cpc,user)
+                    if (userService){
+                        render(message(code: 'default.confirm.account'))
+                    }
+                }
+                catch (Exception e){
+                    flash.checkNet=message(code:'default.check.net')
+                    render(view: 'register')
+                }
+
+            } else {
+                render (view: 'register', model: [user: cpc])
             }
         }
     }
 
-    def checkEmail() {
-        def users = User.findAll()
-            List<User> email = users.email
-            render (email.get(0));
+
+    def checkUsername() {   //check Username with Ajax
+        def user = User.findByUsername(params.username)
+        render(user.username)
     }
 
-    def enableUser() {  //enable the user on clicking activation link
-        String tokenUrl = params.token
-        User user = User.findByToken(tokenUrl)
-        if (user) {
-            user.enabled = true
-            user.token = null
-            user.save(flush: true)
-            render (message(code: 'account.activate'))
-           // flash.message = (message(code: 'account.activate'))
-            //will redirect to homepage
-        } else {
+    def checkEmail() {   //check Email with Ajax
+        def user = User.findByEmail(params.email)
+        render(user.email)
+    }
+
+    def enableUser(User user) {  //enable the user on clicking activation link
+       String token = params.token
+        user = User.findByToken(token)
+        if (user){
+        def userService = enableUserService.Enable(user)
+            if (userService) {
+            flash.message = (message(code: 'account.activate'))
+            redirect(controller: 'login', action: 'auth')
+            }
+        }
+        else {
             render(message(code: 'url.invalid'))
         }
     }
 
-
     //Forget Password
     def forgetPassword(){}
 
-    def sendALink(){   ///By this we will sent a reset link at email
-        String mail
-        String token=UUID.randomUUID()
-        println("============================token========"+token)
-        def user= User.findByUsername(params.loginUser)
-        if (!user){
-            def user1 =User.findByEmail(params.loginUser)
-            mail = user1.email
-            user1.token = token
-            user1.linkcreateDate=new Date()
-            user1.save(flush: true, failOnError: true)
-        }else {
-            mail = user.email
-            user.token = token
-            user.linkcreateDate=new Date()
-            user.save(flush: true, failOnError: true)
+    //@Secured(['ROLE_ADMIN','ROLE_USER'])
+    def sendALink(User user ){   ///By this we will sent a reset link at email
+        user= User.findByUsername(params.username)
+        if(!user) {
+            flash.message = message(code: 'default.user.notFound')
+            render(view: 'forgetPassword')
         }
+        else {
+            try {
+                def userService= sendALinkService.createLink(user)
+                if (userService){
+                    render(message(code: 'password.reset.passwordForget'))
+                }
+            }
+            catch (Exception e){
+                flash.checkNet=message(code:'default.check.net')
+                render(view: 'forgetPassword')
+            }
 
-        sendMail{
-            multipart true
-            to mail
-            subject "Change your Password"
-            String url =  grailsLinkGenerator.link(controller: 'user', action: 'checkUrl',absolute: true,params: [token:token])
-            body url
-            render (message(code: 'password.reset.passwordForget'))
         }
     }
-    def checkUrl(){  //it will check for valid link sent at email
-        String tokenUrl = params.token
-        println(params.token)
-        /*println "===========token:"+tokenUrl*/
-        User user=User.findByToken(tokenUrl)
+
+    //@Secured(['ROLE_ADMIN','ROLE_USER'])
+    def checkUrl(User user){  //it will check for valid link sent at email
+        String token = params.token
+        user=User.findByToken(token)
         if(user) {
-            use (TimeCategory) {
-            if((new Date()- user.linkcreateDate ) <= 5.minutes) {
-                redirect(action: 'resetPassword', params: [tokenUrl: tokenUrl])
+            def userService= checkUrlService.checkurl(user)
+            if(userService) {
+                redirect(action: 'resetPassword', params: [token: token])
             }
             else {
                 render("timeOut")
             }
-            }
-            }
+        }
         else {
             render (message(code: 'url.link.invalid'))
         }
     }
+
+    //@Secured(['ROLE_ADMIN','ROLE_USER'])
     def resetPassword(){ //here we will enter new password
-        // println "==============================================================="+getParams()
     }
 
+    //@Secured(['ROLE_ADMIN','ROLE_USER'])
     def resetCommit() {
-       User user = User.findByToken(params.tokenUrl)
-        user.password = params.password
-        if (user.password == params.confirmpassword) {
-            user.token = null
-            user.linkcreateDate=null
-            user.save(flush: true)
-            // render("password changed successfully")
-            render (message(code: 'password.forget.controller'))
+        if(params.token=='' || params.password=='' || params.confirmpassword==''){
+            flash.message = message(code: 'default.label.blank')
+            render(view: 'resetPassword')
         }
         else {
-            // flash.message = "password is not matched"
-            //redirect(controller: 'passwordForget' ,action: 'resetPassword')
-            flash.error = (message(code: 'password.unmatched.passwordForget'))
-            render (view: 'resetPassword')
+            User user = User.findByToken(params.token)
+            user.password = params.password
+            if (user.password == params.confirmpassword) {
+                user.token = null
+                user.linkcreateDate = null
+                user.save(flush: true)
+                flash.message = message(code: 'password.forget.controller')
+                redirect(controller: 'login', action: 'auth')
+            } else {
+                flash.error = (message(code: 'password.unmatched.passwordForget'))
+                render(view: 'resetPassword')
+            }
         }
     }
 
     //update password
 
+    @Secured(['ROLE_ADMIN','ROLE_USER'])
     def updatePassword(){}
 
     def update() {
-        User user = springSecurityService.getCurrentUser()
-        if (BCrypt.checkpw(params.password, user.password)) {
-            if (params.newPassword == params.confirmNewPassword){
-                user.password=params.newPassword
-                user.save(flush: true)
-                render (message(code: 'password.forget.controller'))
-            }
-            else {
-                flash.error=(message(code: 'password.unmatched.passwordForget'))
+        if(params.password=='' || params.newPassword=='' || params.confirmNewPassword==''){
+            flash.blank = message(code: 'default.label.blank')
+            render(view: 'updatePassword')
+        }
+        else {
+            User user = springSecurityService.getCurrentUser()
+            if (BCrypt.checkpw(params.password, user.password)) {
+                if (params.newPassword == params.confirmNewPassword) {
+                    user.password = params.newPassword
+                    user.save(flush: true)
+                    flash.message = message(code:'login.again')
+                    redirect(controller: 'login', action: 'auth')
+                } else {
+                    flash.error = (message(code: 'password.unmatched.passwordForget'))
+                    render(view: 'updatePassword')
+                }
+
+            } else {
+                flash.message = (message(code: 'password.old.update'))
                 render(view: 'updatePassword')
             }
-
-        } else {
-            flash.message= (message(code: 'password.old.update'))
-            render(view: 'updatePassword')
         }
 
 
@@ -218,29 +232,47 @@ class UserController {
     def unlockAccountLink(){
         String mail
         String token=UUID.randomUUID()
-        println("============================token========"+token)
-        def user= User.findByUsername(params.loginUser)
-        if (!user){
+
+        if (params.loginUser==''){
+            flash.blank= message(code: 'default.label.blank')
+            render(view: 'unlockaccount')
+        }
+        else {
+            def user = User.findByUsername(params.loginUser)
+            if (user) {
+                mail = user.email
+                user.token = token
+                user.linkcreateDate = new Date()
+                //user.accountLocked=true
+                user.save(flush: true, failOnError: true)
+            }
+/*
+        else if (!user){
             def user1 =User.findByEmail(params.loginUser)
             mail = user1.email
             user1.token = token
             user1.linkcreateDate=new Date()
             user1.save(flush: true, failOnError: true)
-        }else {
-            mail = user.email
-            user.token = token
-            user.linkcreateDate=new Date()
-            //user.accountLocked=true
-            user.save(flush: true, failOnError: true)
-        }
+        }*/
+            else {
+                flash.message = message(code: 'default.invalid.user')
+                render(view: 'unlockaccount')
+            }
+            try {
+                sendMail {
+                    multipart true
+                    to mail
+                    subject "Unlock Your Account"
+                    String url = grailsLinkGenerator.link(controller: 'user', action: 'unlockCheckUrl', absolute: true, params: [token: token])
+                    body url
+                    render(message(code: 'password.reset.passwordForget'))
+                }
+            }
+            catch (Exception e){
+                flash.checkNet=message(code:'default.check.net')
+                render(view: 'unlockaccount')
+            }
 
-        sendMail{
-            multipart true
-            to mail
-            subject "Unlock Your Account"
-            String url =  grailsLinkGenerator.link(controller: 'user', action: 'unlockCheckUrl',absolute: true,params: [token:token])
-            body url
-            render (message(code: 'password.reset.passwordForget'))
         }
 
     }
@@ -269,7 +301,9 @@ class UserController {
         user.accountLocked=false
         user.attempts=0
         user.save(flush: true)
-        render("your account is successfully unlocked")
+       // render("your account is successfully unlocked")
+        flash.message="default.account.unlocked"
+        redirect(controller: 'login', action: 'auth')
     }
 
 

@@ -7,11 +7,24 @@
 </head>
 
 <body>
-%{--<p>Edit your profile?<a href="<g:createLink controller="user" action="edit"/> ">Edit</a></p><br><br>--}%
-<table>
-    <tr><b><td>Product Name : </td></b><td>${product.name}</td></tr>
-    <tr><b><td>Price : </td></b><td>${product.price}</td></tr>
-    <tr><b><td>Details</td></b><td>${product.details}</td></tr>
+
+<table border="1">
+    <tr>
+        <th>Product Name</th>
+        <th>Price</th>
+        <th>Details</th>
+        <th>Image</th>
+    </tr>
+    <tr>
+        <g:each in="${product}" var="i">
+            <tr>
+            <td>${i.name}</td>
+            <td>${i.price}</td>
+            <td>${i.details}</td>
+            <td><g:img width="150" height="150" dir="productImages" file="${i.productImage}"/></td>
+            </tr>
+        </g:each>
+    </tr>
 </table>
 </body>
 </html>

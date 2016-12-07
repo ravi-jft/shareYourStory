@@ -1,10 +1,9 @@
 import bruteForce.AuthenticationFailureListener
 import bruteForce.AuthenticationSuccessEventListener
-import loginWithMail.CustomUserDetailsService
 
 // Place your Spring DSL code here
 beans = {
-    userDetailsService(CustomUserDetailsService)
+    userDetailsService(loginWithMail.UserDetail)
 
     authenticationFailureListener(AuthenticationFailureListener) {
         loginAttemptCacheService = ref('loginAttemptCacheService')

@@ -114,7 +114,7 @@ grails.plugin.springsecurity.useSecurityEventListener = true //enable spring sec
 
 grails.plugin.springsecurity.apf.storeLastUsername=true  //store last spring security username
 
-grails.plugin.springsecurity.successHandler.alwaysUseDefault = true
+grails.plugin.springsecurity.successHandler.alwaysUseDefault = false
 grails.plugin.springsecurity.successHandler.defaultTargetUrl = '/user/home'
 
 
@@ -173,12 +173,15 @@ grails.plugin.springsecurity.authority.className = 'loginWithMail.Role'
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 	'/':                ['permitAll'],
 	'/index':           ['permitAll'],
-   /* '/home':            ['ROLE_ADMIN'],*/
+    '/home':            ['permitAll'],
 	'/assets/**':       ['permitAll'],
 	'/**/js/**':        ['permitAll'],
 	'/**/css/**':       ['permitAll'],
 	'/**/images/**':    ['permitAll'],
 	'/**/favicon.ico':  ['permitAll'],
-    '/**/img/**':    ['permitAll']
+    '/**/img/**':       ['permitAll'],
+    '/**/productImages/**' :['permitAll']
+
+
 ]
 

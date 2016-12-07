@@ -12,163 +12,83 @@ import grails.transaction.Transactional
 @Secured(['ROLE_ADMIN'])
 class ProductController {
 
- //   static scaffold = true
+    //   static scaffold = true
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    static defaultAction = "insertProduct"
-    def index(){
-        /*def navmenu = NavMenu.executeQuery("select id from NavMenu where id NOT IN(select parent.id from NavMenu where parent.id IS NOT NULL ) ")
-        [navmenu:navmenu]*/
+    static defaultAction = "addProduct"
+
+    def index() {
     }
 
 
-    def insertProduct(){
+    def addProduct() {
 
-       /* def id = NavMenu.executeQuery("select id from NavMenu where id NOT IN(select parent.id from NavMenu where parent.id IS NOT NULL ) ")*/
-       // def navmenu = NavMenu.findAllById(id)
+        /* def id = NavMenu.executeQuery("select id from NavMenu where id NOT IN(select parent.id from NavMenu where parent.id IS NOT NULL ) ")*/
+        // def navmenu = NavMenu.findAllById(id)
 
         def ids = NavMenu.executeQuery("select id from NavMenu where id NOT IN(select parent.id from NavMenu where parent.id IS NOT NULL ) ")
-       // println("===============dynamic finder ==========="+navmenu)
-        /*[navmenu:navmenu]*/
-       /* def navmenu = NavMenu.findByIdNotEqualAndParentIsNotNull()
-        println("===============dynamic finder ==========="+navmenu)*/
-        println "---------ids-----------"+ids
-          List<NavMenu> menus=  NavMenu.createCriteria().list {
-              'in'('id',ids)
-          }
-        println("===============navmenu ==========="+menus*.category)
-        [menus:menus]
+        List<NavMenu> menus = NavMenu.createCriteria().list {
+            'in'('id', ids)
+        }
+        [menus: menus]
     }
 
-  /*  def save(){
-        withForm {
-            def product = new Product(params)
-            if (product.validate()) {
-                product.save(flush: true)
-            }
-            else {
-                *//*flash.error = "some errors"
-                render (view:'/product/index')*//*
-                render "some errors"
-            }
-        }.invalidToken{
+    def save() {
+        def productInstance = new Product(name: params.name, details: params.details, price: params.price, unit: params.unit, category: params.category)
 
-        }
-    }*/
+        if (productInstance.validate()) {
+            productInstance.save(flush: true, failOnError: true)
+            def proImage = request.getFile('productImage')
+            def okContentTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif']
+            //there must be only this type of files
+            if (!proImage?.empty && proImage.size < 1024 * 200 && okContentTypes.contains(proImage.getContentType())) {
+                def imagepath = servletContext.getRealPath("/") + "productImages/" + proImage.getOriginalFilename()
+                proImage.transferTo(new File(imagepath))
+                productInstance.productImage = (String) proImage.getOriginalFilename()
+                productInstance.save(flush: true, failOnError: true)
+                flash.message = message(code: 'product.success')
+                redirect(action: 'addProduct')
 
-    def save(){
-        def product = new Product(params)
-        if (product.validate()){
-            product.save(flush: true)
-            flash.message = message(code: 'product.success')
-            //render (view: '/product/insertProduct') //render doesn't populate data
-            redirect(action: 'insertProduct')
-        }
-        else {
-            render "some errors"
+            } else {
+                flash.message = message(code: 'default.prdouct.image')
+                redirect(action: 'addProduct')
+            }
+        } else {
+            def menus = NavMenu.executeQuery("from NavMenu where id NOT IN(select parent.id from NavMenu where parent.id IS NOT NULL ) ")
+            render(view: "addProduct", model: [productInstance: productInstance, menus: menus])
         }
     }
 
-    def show(){  //view the product
+    //@Secured(['ROLE_ADMIN','ROLE_USER'])
+    @Secured(['permitAll'])
+    def show() {  //view the product
         def product = Product.list()
-        [product:product]
+        [product: product]
     }
 
-    def edit(){   //update the product
+    def edit() {   //update the product
         def product = Product.list()
-        [product:product]
+        [product: product]
     }
 
-  /*  def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        respond Product.list(params), model: [productInstanceCount: Product.count()]
+    @Secured(['permitAll'])
+    def savecart() {
+
     }
 
-    def show(Product productInstance) {
-        respond productInstance
+    @Secured(['permitAll'])
+    def showcart() {
     }
 
-    def create() {
-        respond new Product(params)
+    @Secured(['permitAll'])
+     def savelocal(){
+         def name= params.productname
+         def price=params.price
+         def productImage=params.productimage
+         def id = params.id
+         [name:name,price: price,productImage:productImage,id:id]
+     }
+
     }
 
-    @Transactional
-    def save(Product productInstance) {
-        if (productInstance == null) {
-            notFound()
-            return
-        }
-
-        if (productInstance.hasErrors()) {
-            respond productInstance.errors, view: 'create'
-            return
-        }
-
-        productInstance.save flush: true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.created.message', args: [message(code: 'product.label', default: 'Product'), productInstance.id])
-                redirect productInstance
-            }
-            '*' { respond productInstance, [status: CREATED] }
-        }
-    }
-
-    def edit(Product productInstance) {
-        respond productInstance
-    }
-
-    @Transactional
-    def update(Product productInstance) {
-        if (productInstance == null) {
-            notFound()
-            return
-        }
-
-        if (productInstance.hasErrors()) {
-            respond productInstance.errors, view: 'edit'
-            return
-        }
-
-        productInstance.save flush: true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.updated.message', args: [message(code: 'Product.label', default: 'Product'), productInstance.id])
-                redirect productInstance
-            }
-            '*' { respond productInstance, [status: OK] }
-        }
-    }
-
-    @Transactional
-    def delete(Product productInstance) {
-
-        if (productInstance == null) {
-            notFound()
-            return
-        }
-
-        productInstance.delete flush: true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'Product.label', default: 'Product'), productInstance.id])
-                redirect action: "index", method: "GET"
-            }
-            '*' { render status: NO_CONTENT }
-        }
-    }
-
-    protected void notFound() {
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.not.found.message', args: [message(code: 'product.label', default: 'Product'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*' { render status: NOT_FOUND }
-        }
-    }*/
-}

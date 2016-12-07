@@ -1,3 +1,4 @@
+<%@ page import="loginWithMail.NavMenu; loginWithMail.Product" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -51,20 +52,40 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
+                <li class="active"><a href="<g:createLink controller="user" action="userHome"/>">Home</a></li>
+
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">All Items<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <g:each in="${NavMenu.list()}" var="i">
+                            <g:if test="${i.parentId==null}">
+                                <a href="">${i.category}</a><br>&nbsp;&nbsp;
+                                <g:each in="${NavMenu.list()}" var="j">
+                                    <g:if test="${i.id == j.parentId}">
+                                        <a href="">${j.category}</a><br>
+                                        <% i = j %>
+                                    </g:if>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                </g:each>
+                                <br>
+                            </g:if>
+                        </g:each>
+                    </ul>
+                </li>
+
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">${sec.loggedInUserInfo(field: 'username')}<span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="<g:createLink controller="user" action="show"/>">Profile</a></li>
-                        <li><a href="#">Page 1-2</a></li>
+                        <li><a href="<g:createLink controller="user" action="show"/>">Update Password</a></li>
                         <li><a href="#">Page 1-3</a></li>
                     </ul>
                 </li>
                 <li><a href="#">Page 2</a></li>
-                <li><a href="#">Page 3</a></li>
+                <li><a href="<g:createLink controller="cart" action="show"/>">Your Cart</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+
                 <li><a href="<g:createLink controller="logout"/>"><span class="glyphicon glyphicon-log-in"></span> LogOut</a></li>
             </ul>
         </div>
@@ -73,24 +94,25 @@
 
 
 
+
 <!-- Page Header -->
 <!-- Set your background image for this header on the line below. -->
-<header class="intro-header"  style="background-image:url('${resource(dir: "../grails-app/assets/images/img", file: "home-bg.jpg")}');">
+<header class="intro-header"  style="background-image:url('${resource(dir: "/images", file: "shop11.jpg")}');">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 <div class="site-heading">
-                    <h1>My Story</h1>
+                    <h1>Delhi Shopping App</h1>
                     <hr class="small">
-                    <span class="subheading">Share Your Story With World</span>
+                    <span class="subheading">Shopping Here At Cheapest Price with Good Quality</span>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
-<g:layoutBody/>
 
+<g:layoutBody/>
 <!-- Footer -->
 <footer>
     <div class="container">

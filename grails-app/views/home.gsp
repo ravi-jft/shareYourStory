@@ -1,3 +1,4 @@
+<%@ page import="loginWithMail.Product" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -51,24 +52,13 @@
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Home</a></li>
-        <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" href="#">${sec.loggedInUserInfo(field: 'username')}<span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="<g:createLink controller="user" action="show"/>">Profile</a></li>
-            <li><a href="#">Page 1-2</a></li>
-                <ul class="right-menu">
-                   <li><a href="#">page 1.1</a> </li>
-                </ul>
-            <li><a href="#">Page 1-3</a></li>
-          </ul>
-        </li>
-        <li><a href="<g:createLink controller="navMenu" action="createCategory"/>">Create Category</a></li>
-        <li><a href="<g:createLink controller="product" action="insertProduct"/>">Add Product</a></li>
+        <li class="active"><a href="http://localhost:8080/delhiShopApp3">Home</a></li>
+        <li><a href="<g:createLink controller="product" action="showcart"/>">Your Cart</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-        <li><a href="<g:createLink controller="logout"/>"><span class="glyphicon glyphicon-log-in"></span> LogOut</a></li>
+       %{-- <li><a href="<g:createLink controller="login" action="auth"/>"><span class="glyphicon glyphicon-user"></span> Login</a></li>--}%
+        <li><a href="<g:createLink controller="user" action="home"/>"><span class="glyphicon glyphicon-user"></span> Login</a></li>
+        <li><a href="<g:createLink controller="user" action="register"/>"><span class="glyphicon glyphicon-log-in"></span> Sign UP</a></li>
       </ul>
     </div>
   </div>
@@ -78,14 +68,14 @@
 
 <!-- Page Header -->
 <!-- Set your background image for this header on the line below. -->
-<header class="intro-header"  style="background-image:url('${resource(dir: "../grails-app/assets/images/img", file: "home-bg.jpg")}');">
+<header class="intro-header"  style="background-image:url('${resource(dir: "/images", file: "shop11.jpg")}');">
   <div class="container">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         <div class="site-heading">
-          <h1>My Story</h1>
+          <h1>Delhi Shopping App</h1>
           <hr class="small">
-          <span class="subheading">Share Your Story With World</span>
+          <span class="subheading">Shopping Here At Cheapest Price with Good Quality</span>
         </div>
       </div>
     </div>
@@ -93,65 +83,30 @@
 </header>
 
 <!-- Main Content -->
-<div class="container">
-  <div class="row">
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      <div class="post-preview">
-        <a href="post.html">
-          <h2 class="post-title">
-            Man must explore, and this is exploration at its greatest
-          </h2>
-          <h3 class="post-subtitle">
-            Problems look mighty small from 150 miles up
-          </h3>
-        </a>
-        <p class="post-meta">Posted by <a href="#">Start Bootstrap</a> on September 24, 2014</p>
-      </div>
-      <hr>
-      <div class="post-preview">
-        <a href="post.html">
-          <h2 class="post-title">
-            I believe every human has a finite number of heartbeats. I don't intend to waste any of mine.
-          </h2>
-        </a>
-        <p class="post-meta">Posted by <a href="#">Start Bootstrap</a> on September 18, 2014</p>
-      </div>
-      <hr>
-      <div class="post-preview">
-        <a href="post.html">
-          <h2 class="post-title">
-            Science has not yet mastered prophecy
-          </h2>
-          <h3 class="post-subtitle">
-            We predict too much for the next year and yet far too little for the next ten.
-          </h3>
-        </a>
-        <p class="post-meta">Posted by <a href="#">Start Bootstrap</a> on August 24, 2014</p>
-      </div>
-      <hr>
-      <div class="post-preview">
-        <a href="post.html">
-          <h2 class="post-title">
-            Failure is not an option
-          </h2>
-          <h3 class="post-subtitle">
-            Many say exploration is part of our destiny, but it’s actually our duty to future generations.
-          </h3>
-        </a>
-        <p class="post-meta">Posted by <a href="#">Start Bootstrap</a> on July 8, 2014</p>
-      </div>
-      <hr>
-      <!-- Pager -->
-      <ul class="pager">
-        <li class="next">
-          <a href="#">Older Posts &rarr;</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</div>
 
-<hr>
+<g:each in="${0..<Product.list().size()/4}">
+  <g:each in="${Product.list()}" var="i" >
+    <div class="col-md-3" >
+      <div class="content"><a href="details.gsp">
+        <g:img width="150" height="150" dir="productImages" file="${i.productImage}" class="img-responsive" alt=""/>
+      </a>
+        <h4><a href="details.html">${i.id}</a></h4>
+        <div class="item_add"><span class="item_price"><h6>ONLY $${i.price}</h6></span></div>
+        %{--use hidden field--}%
+    %{--   <div>
+        ---}%%{--<g:form controller="product" action="savecart">--}%%{--
+           <g:hiddenField name="${i.id}" value="${i.id}" id="id"/><br>
+           <g:hiddenField name="${i.name}" value="${i.name}" id="name"/><br>
+           <g:hiddenField name="${i.price}" value="${i.price}" id="price"/><br>
+           <g:hiddenField name="${i.productImage}" value="${i.productImage}" id="productImage"/>
+           <input type="button" value="Add To Cart" onclick="save()"/>
+         --}%%{--</g:form>--}%%{--
+        </div>--}%
+        <td> <g:link controller="product" action="savelocal" params='[productname:"${i.name}",price:"${i.price}",productimage:"${i.productImage}",id:"${i.id}"]'>Add To Cart</g:link> </td>
+      </div>
+    </div>
+  </g:each>
+</g:each>
 
 <!-- Footer -->
 <footer>
@@ -202,6 +157,23 @@
 
 <!-- Theme JavaScript -->
 <script src="js/clean-blog.min.js"></script>
+
+%{--<script>
+  function save(){
+    var id =    document.getElementById('id').value;
+    var name =  document.getElementById('name').value;
+    var price = document.getElementById('price').value;
+    var image=  document.getElementById('productImage').value;
+
+      objects={
+      "name":name,
+      "price":price,
+      "image":image
+    };
+    localStorage.setItem(1+i,JSON.stringify(objects));
+  };
+
+</script>--}%
 
 </body>
 

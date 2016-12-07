@@ -45,9 +45,10 @@ class LoginAttemptCacheService {
         numberOfAttempts++
 
         /*For storing number of attempts*/
-        int temp = numberOfAttempts  //for storing no. of attempts in database
+        //int temp = numberOfAttempts  //for storing no. of attempts in database
         User user = User.findByUsername(login)
-        user.attempts = temp
+        //user.attempts = temp
+        user.attempts = numberOfAttempts
         user.save(flush: true)
 
         if (numberOfAttempts >= allowedNumberOfAttempts) {

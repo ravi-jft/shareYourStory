@@ -72,13 +72,10 @@ grails.project.dependency.resolution = {
         compile ":asset-pipeline:1.9.9"
         compile "org.grails.plugins:spring-security-core:2.0.0"
         compile ":mail:1.0.7"
-        compile "org.grails.plugins:searchable:0.6.9"
-       // compile 'org.apache.lucene:lucene-spellchecker:2.4.1'
-      //  compile "org.apache.lucene:lucene-highlighter:2.4.1"
 
         // plgins needed at runtime but not for compilation
-       // runtime ":hibernate4:4.3.6.1" // or ":hibernate:3.6.10.18"
-        runtime ":hibernate:3.6.10.18"
+        runtime ":hibernate4:4.3.6.1" // or ":hibernate:3.6.10.18"
+        //runtime ":hibernate:3.6.10.18"
         runtime ":database-migration:1.4.0"
         runtime ":jquery:1.11.1"
 

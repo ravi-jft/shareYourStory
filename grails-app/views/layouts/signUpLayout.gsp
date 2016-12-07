@@ -38,16 +38,38 @@
 </head>
 
 <body>
+
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">WebSiteName</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="http://localhost:8080/delhiShopApp">Home</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="<g:createLink controller="user" action="home"/>"><span class="glyphicon glyphicon-user"></span> Login</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
 <!-- Page Header -->
 <!-- Set your background image for this header on the line below. -->
-<header class="intro-header"  style="background-image:url('${resource(dir: "../grails-app/assets/images/img", file: "home-bg.jpg")}');">
+<header class="intro-header"  style="background-image:url('${resource(dir: "/images", file: "shop11.jpg")}');">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 <div class="site-heading">
-                    <h1>Clean Blog</h1>
+                    <h1>Delhi Shopping App</h1>
                     <hr class="small">
-                    <span class="subheading">A Clean Blog Theme by Start Bootstrap</span>
+                    <span class="subheading">Shopping Here at Cheapest Price with Good Quality</span>
                 </div>
             </div>
         </div>

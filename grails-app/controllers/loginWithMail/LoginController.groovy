@@ -27,9 +27,6 @@ class LoginController {
      */
     def springSecurityService
 
-    /**
-     * Default action; redirects to 'defaultTargetUrl' if logged in, /login/auth otherwise.
-     */
     def index() {
         if (springSecurityService.isLoggedIn()) {
             redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
@@ -133,7 +130,7 @@ class LoginController {
      * The Ajax success redirect url.
      */
     def ajaxSuccess() {
-        render([success: true, username: springSecurityService.authentication.name] as JSON)
+        render([success: true, username: springSecurityService.authqentication.name] as JSON)
     }
 
     /**

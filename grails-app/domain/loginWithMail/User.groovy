@@ -16,7 +16,7 @@ class User implements Serializable {
 	String firstname
 	String lastname
 	String email
-	String contact
+	Integer contact
 	String address
 	String username
 	String password
@@ -30,15 +30,13 @@ class User implements Serializable {
 	boolean accountLocked
 	boolean passwordExpired
 
-	static hasMany = [navMenu:NavMenu]
+	static hasMany = [navMenu:NavMenu,cart:Cart]
+	//static hasOne = [cart:Cart]
 
-	User(String firstname,String lastname,String email,String contact,String address, username, String password) {
+	User(String firstname,String email,String username, String password) {
 		this()
 		this.firstname=firstname
-		this.lastname=lastname
 		this.email=email
-		this.contact=contact
-		this.address=address
 		this.username = username
 		this.password = password
 	}
@@ -66,16 +64,18 @@ class User implements Serializable {
 	static transients = ['springSecurityService']
 
 	static constraints = {
-		firstname blank: false
-		lastname nullable: true
+		firstname blank: false, matches: /^\p{L}+(?: \p{L}+)*$/
+		lastname nullable: true, matches: /^\p{L}+(?: \p{L}+)*$/
 		email email: true,unique: true
 		contact nullable: true
-		address nullable: true
-		username blank: false, unique: true
+		address nullable: true, matches: /^[^a-zA-Z0-9]*$/
+		username blank: false, unique: true,matches: /^\p{L}+(?: \p{L}+)*$/
 		password blank: false
 		token nullable: true
 		linkcreateDate nullable: true
 		linkuseDate nullable: true
+
+		//cart nullable: true   //there may not be even a single cart of User
 	}
 
 	static mapping = {

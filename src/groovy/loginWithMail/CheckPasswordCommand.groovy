@@ -10,7 +10,7 @@ class CheckPasswordCommand {
     String firstname
     String lastname
     String email
-    String contact
+    Integer contact
     String address
     String username
     String password
@@ -20,7 +20,7 @@ class CheckPasswordCommand {
         firstname blank: false
         lastname nullable: true
         email blank: false, email: true
-        contact nullable: true
+        contact nullable: true,range: 10..10
         address nullable: true
         username blank: false
         conformpassword (nullable: false,

@@ -147,7 +147,7 @@ private void updateConfig() {
 		writer.writeLine 'grails.plugin.springsecurity.controllerAnnotations.staticRules = ['
 		writer.writeLine "\t'/':                ['permitAll'],"
 		writer.writeLine "\t'/index':           ['permitAll'],"
-		writer.writeLine "\t'/insertProduct.gsp':       ['permitAll'],"
+		writer.writeLine "\t'/addProduct.gsp':       ['permitAll'],"
 		writer.writeLine "\t'/assets/**':       ['permitAll'],"
 		writer.writeLine "\t'/**/js/**':        ['permitAll'],"
 		writer.writeLine "\t'/**/css/**':       ['permitAll'],"

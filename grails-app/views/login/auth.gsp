@@ -86,6 +86,9 @@
 </head>
 
 <body>
+%{--<g:if test="${flash.message}">
+    ${flash.message}
+</g:if>--}%
 <div id='login'>
     <div class='inner'>
         <div class='fheader'><g:message code="springSecurity.login.header"/></div>
@@ -115,7 +118,7 @@
             </p>
         </form>
         <p>Not a member?<a href="<g:createLink controller="user" action="register"/> ">SignUp</a></p><br><br>
-        <p>Forget Password?<a href="<g:createLink controller="user" action="forgetPassword"/> ">Reset Password</a></p>
+        <p>Forget Password?<a href="<g:createLink controller="user" action="forgetPassword"/> ">Forget Password</a></p>
         <p>Unlock Your account, if locked?<a href="<g:createLink controller="user" action="unlockaccount"/> ">Unlock Account</a></p>
     </div>
 </div>
